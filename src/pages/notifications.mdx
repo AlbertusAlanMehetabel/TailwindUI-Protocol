@@ -1,0 +1,122 @@
+export const description =
+  'Notifications are a crucial part of keeping users informed about activities and updates relevant to them.'
+
+# Notifications
+
+Notifications are a crucial part of keeping users informed about activities and updates relevant to them.
+
+## The notification model
+
+A notification object contains the following properties:
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the group.
+  </Property>
+  <Property name="type" type="string">
+    The type of the notification (e.g., "message", "group_invite").
+  </Property>
+  <Property name="content" type="string">
+    The content or description of the notification.
+  </Property>
+  <Property name="timestamp" type="string">
+    The content or description of the notification.
+  </Property>
+  <Property name="is_read" type="boolean">
+    Indicates whether the notification has been marked as read.
+  </Property>
+</Properties>
+
+---
+
+## Get user notifications {{ tag: 'GET', label: '/user/:userId/notifications' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve notifications for a specific user.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose notifications you want to retrieve.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/notifications">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.notifications.getForUser('user_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Notifications retrieved",
+    "notification_count": 3,
+    "notifications": [
+      {
+        "id": "notification_id_1",
+        "type": "message",
+        "content": "You have a new message from User 1.",
+        "timestamp": "2023-08-17T12:01:00Z",
+        "is_read": false
+      },
+      {
+        "id": "notification_id_2",
+        "type": "group_invite",
+        "content": "You have been invited to join Group A.",
+        "timestamp": "2023-08-17T12:02:00Z",
+        "is_read": true
+      },
+      // ...
+    ]
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Mark a notification as read {{ tag: 'PUT', label: '/user/:userId/notifications/:notificationId/mark-read' }}
+<Row>
+  <Col>
+    This endpoint allows a user to mark a specific notification as read.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user who wants to mark the notification as read.
+      </Property>
+      <Property name="notificationId" type="string">
+        The ID of the notification to be marked as read.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PUT" label="/user/user_id/notifications/notification_id/mark-read">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.notifications.markAsRead('user_id', 'notification_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Notification marked as read."
+  }
+  ```
+
+  </Col>
+</Row>

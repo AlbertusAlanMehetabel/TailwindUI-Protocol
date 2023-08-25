@@ -1,0 +1,338 @@
+export const description =
+  'On this page, we’ll dive into the different group endpoints you can use to manage groups programmatically.'
+
+# Groups
+
+Groups are where communities live in Protocol — they are a collection of contacts you're talking to all at once. On this page, we'll dive into the different group endpoints you can use to manage groups programmatically. We'll look at how to query, create, update, and delete groups. {{ className: 'lead' }}
+
+## The group model
+
+The group model contains all the information about your groups, including what contacts are in the group and the group's name, description, and avatar.
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the group.
+  </Property>
+  <Property name="name" type="string">
+    The name for the group.
+  </Property>
+  <Property name="description" type="string">
+    The description for the group.
+  </Property>
+  <Property name="avatar_url" type="string">
+    The avatar image URL for the group.
+  </Property>
+  <Property name="conversation_id" type="string">
+    Unique identifier for the conversation that belongs to the group.
+  </Property>
+  <Property name="contacts" type="array">
+    An array of contact objects that are members of the group.
+  </Property>
+  <Property name="created_at" type="timestamp">
+    Timestamp of when the group was created.
+  </Property>
+  <Property name="archived_at" type="timestamp">
+    Timestamp of when the group was archived.
+  </Property>
+</Properties>
+
+---
+
+## Get all groups {{ tag: 'GET', label: '/user/:userId/groups' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve a list of all groups that a specific user is a member of. Groups are collections of two or more users who can communicate with each other in a shared chat space.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user for whom you want to retrieve the groups.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/groups">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.groups.getAllForUser('user_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Groups retrieved successfully",
+    "group_count": 2,
+    "groups": [
+      {
+        "id": "group_id_1",
+        "name": "Family Group",
+        "members": [
+          {
+            "id": "user_id_1",
+            "full_name": "User 1",
+            "profil_picture": "https://example.com/user1.jpg"
+          },
+          {
+            "id": "user_id_2",
+            "full_name": "User 2",
+            "profil_picture": "https://example.com/user2.jpg"
+          },
+          // ...
+        ],
+        "created_at": "timestamp"
+      },
+      {
+        "id": "group_id_2",
+        "name": "Work Team",
+        "members": [
+          {
+            "id": "user_id_3",
+            "full_name": "User 3",
+            "profil_picture": "https://example.com/user3.jpg"
+          },
+          {
+            "id": "user_id_4",
+            "full_name": "User 4",
+            "profil_picture": "https://example.com/user4.jpg"
+          },
+          // ...
+        ],
+        "created_at": "timestamp"
+      },
+      // ...
+    ]
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Get a group {{ tag: 'GET', label: '/group/:groupId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve detailed information about a specific group.
+
+    ### Required attributes
+    <Properties>
+      <Property name="groupId" type="string">
+        The ID of the group you want to retrieve information for.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/group/group_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.groups.get('group_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Group information retrieved successfully",
+    "group": {
+      "id": "group_id",
+      "name": "Family Group",
+      "members": [
+        {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg"
+        },
+        {
+          "id": "user_id_2",
+          "full_name": "User 2",
+          "profil_picture": "https://example.com/user2.jpg"
+        },
+        // ...
+      ],
+      "created_at": "timestamp"
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Create a group {{ tag: 'POST', label: '/group' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create a new group with specified members.
+
+    ### Required attributes
+    <Properties>
+      <Property name="name" type="string">
+        The name of the group to be created.
+      </Property>
+      <Property name="members" type="array">
+        An array of member IDs that will be part of the group.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="POST" label="/group">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  const newGroup = {
+    name: 'Family Group',
+    members: ['user_id_1', 'user_id_2']
+  }
+
+  await client.groups.create(newGroup)
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Group created successfully",
+    "group": {
+      "id": "new_group_id",
+      "name": "Family Group",
+      "members": [
+        {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg"
+        },
+        {
+          "id": "user_id_2",
+          "full_name": "User 2",
+          "profil_picture": "https://example.com/user2.jpg"
+        }
+      ],
+      "created_at": "timestamp"
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update a group {{ tag: 'PATCH', label: '/group/:groupId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update the information of an existing group.
+
+    ### Required attributes
+    <Properties>
+      <Property name="groupId" type="string">
+        The ID of the group to be updated.
+      </Property>
+    </Properties>
+    
+    ### Optional attributes
+    <Properties>
+      <Property name="name" type="string">
+        The updated name of the group.
+      </Property>
+      <Property name="members" type="array">
+        An array of member IDs to be added to or removed from the group.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PATCH" label="/group/group_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  const updatedGroup = {
+    name: 'New Group Name',
+    members: {
+      add: ['user_id_3'],
+      remove: ['user_id_2']
+    }
+  }
+
+  await client.groups.update('group_id', updatedGroup)
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Group updated successfully",
+    "group": {
+      "id": "group_id",
+      "name": "New Group Name",
+      "members": [
+        {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg"
+        },
+        {
+          "id": "user_id_3",
+          "full_name": "User 3",
+          "profil_picture": "https://example.com/user3.jpg"
+        }
+      ],
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Delete a group {{ tag: 'DELETE', label: '/group/:groupId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to delete an existing group.
+
+    ### Required attributes
+    <Properties>
+      <Property name="groupId" type="string">
+        The ID of the group to be deleted.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="DELETE" label="/group/group_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.groups.delete('group_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Group deleted successfully",
+  }
+  ```
+
+  </Col>
+</Row>

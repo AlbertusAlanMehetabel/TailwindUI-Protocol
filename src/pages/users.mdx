@@ -1,0 +1,606 @@
+export const description =
+  'On this page, we’ll dive into the different user endpoints you can use to manage user accounts and privacy settings programmatically.'
+
+# Users
+
+On this page, we'll dive into the different user endpoints you can use to manage user accounts and privacy settings programmatically.
+
+## The user model
+
+The user model contains all the information about a user, such as their ID, full name, phone number, email, profile picture, creation date, and more.
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the user.
+  </Property>
+  <Property name="full_name" type="string">
+    Full name of the user.
+  </Property>
+  <Property name="phone_number" type="string">
+    Phone number of the user.
+  </Property>
+  <Property name="email" type="string">
+    Email address of the user.
+  </Property>
+  <Property name="profile_picture" type="string">
+    URL of the user's profile picture.
+  </Property>
+  <Property name="created_at" type="string">
+    Timestamp of when the user was created.
+  </Property>
+  <Property name="updated_at" type="string">
+    Timestamp of when the user was last updated.
+  </Property>
+  <Property name="about" type="string">
+    About section of the user's profile.
+  </Property>
+  <Property name="status" type="string">
+    User's current status.
+  </Property>
+  <Property name="blocked_contacts" type="array">
+    List of blocked contact IDs.
+  </Property>
+  <Property name="friends" type="array">
+    List of friend IDs.
+  </Property>
+  <Property name="groups" type="array">
+    List of group IDs.
+  </Property>
+</Properties>
+
+---
+
+## Get all user account {{ tag: 'GET', label: '/user/account' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve a paginated list of all user accounts. By default, a maximum of ten user accounts are shown per pag
+
+    ### Optional attributes
+    <Properties>
+      <Property name="limit" type="integer">
+        Limit the number of user accounts returned per page.
+      </Property>
+    </Properties>
+  </Col>
+
+  <Col sticky>
+    <CodeGroup title="Request" tag="GET" label="/user/account">
+    ```js
+    import ApiClient from '@example/protocol-api'
+
+    const client = new ApiClient(token)
+
+    await client.users.list({ limit: 5 })
+    ```
+
+    </CodeGroup>
+    ```json {{ title: 'Response' }}
+    {
+      "message": "All user account retrieved",
+      "user_count": 2,
+      "user": [
+        {
+          "id": "user_id",
+          "full_name": "User Baru",
+          "phone_number": "081234567890",
+          "email": "user@example.com",
+          "profile_picture": "https://example.com/media/foto.jpg",
+          "about": "Hi there",
+          "status": null,
+          "last_active_at": "timestamp",
+          "created_at": "timestamp",
+          "updated_at": "timestamp",
+        },
+        {
+          "id": "user_id_2",
+          // ...
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Get a user {{ tag: 'GET', label: '/user/:userId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve detailed information about a specific user by their user ID.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user you want to retrieve information about.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.get('user_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "User information retrieved successfully",
+    "user": {
+      "id": "user_id",
+      "full_name": "User Baru",
+      "phone_number": "081234567890",
+      "email": "user@example.com",
+      "profile_picture": "https://example.com/media/foto.jpg",
+      "about": "Hi there",
+      "status": null,
+      "last_active_at": "timestamp",
+      "created_at": "timestamp",
+      "updated_at": "timestamp",
+    }
+  }
+  ```
+  </Col>
+</Row>
+
+---
+
+## Create user account {{ tag: 'POST', label: '/user/account' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create a new user account. Provide the required attributes to create the user's account.
+
+    ### Required attributes
+    <Properties>
+      <Property name="first_name" type="string">
+        The first name of the user.
+      </Property>
+      <Property name="last_name" type="string">
+        The last name of the user.
+      </Property>
+      <Property name="phone_number" type="string">
+        The phone number of the user.
+      </Property>
+      <Property name="email" type="string">
+        The email address of the user.
+      </Property>
+      <Property name="password" type="string">
+        The password for the user's account.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="avatar_url" type="string">
+        The avatar image URL for the user.
+      </Property>
+      <Property name="about" type="string">
+        A short description or about section for the user.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="POST" label="/user/account">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.create({
+    first_name: 'New',
+    last_name: 'User',
+    phone_number: '081234567890',
+    email: 'newuser@example.com',
+    password: 'password123',
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "User account created successfully",
+    "user": {
+      "id": "user_id",
+      "full_name": "New User",
+      "phone_number": "081234567890",
+      "email": "newuser@example.com",
+      "profile_picture": "https://example.com/media/default_avatar.jpg",
+      "about": "",
+      "status": null,
+      "last_active_at": null,
+      "created_at": "timestamp",
+      "updated_at": "timestamp",
+    },
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update user profile {{ tag: 'PATCH', label: '/user/account/:userId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update user account information. Provide the required attributes to update the user's full name, about, and profile picture.
+
+    ### Required attributes
+    <Properties>
+      <Property name="full_name" type="string">
+        The full name of the user.
+      </Property>
+      <Property name="about" type="string">
+        A brief description about the user.
+      </Property>
+      <Property name="profile_picture" type="string">
+        URL to the user's profile picture.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PATCH" label="/user/account/user_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.update('user_id', {
+    full_name: "Abc",
+    about: "Availabe",
+    profile_picture: "https://example.com/media/foto_baru.jpg",
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "User account updated successfuly",
+    "user": {
+      "id": "user_id",
+      "full_name": "Abc",
+      "phone_number": "081234567890",
+      "email": "user@example.com",
+      "profile_picture": "https://example.com/media/foto_baru.jpg",
+      "about": "Available",
+      "status": null,
+      "last_active_at": "timestamp",
+      "created_at": "timestamp",
+      "updated_at": "timestamp",
+    },
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update user number {{ tag: 'PUT', label: '/user/account/:userId/number' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update the phone number associated with the user's account. Provide the new phone number and the account password for verification.
+
+    ### Required attributes
+    <Properties>
+      <Property name="phone_number" type="string">
+        The phone number to be set for the user's account. 
+      </Property>
+      <Property name="password" type="string">
+        The current password of the user's account.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PUT" label="/user/account/user_id/number">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.update('user_id',{
+    phone_number: '081234567890',
+    password: 'new_password',
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Phone number updated successfully."
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update user email {{ tag: 'PUT', label: '/user/account/:userId/email' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update the email associated with the user's account. Provide the new email and the account password for verification.
+
+    ### Required attributes
+    <Properties>
+      <Property name="email" type="string">
+        The email to be set for the user's account. 
+      </Property>
+      <Property name="password" type="string">
+        The current password of the user's account.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PUT" label="/user/account/user_id/email">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.update('user_id',{
+    email: 'new@example.com',
+    password: 'new_password',
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Email updated successfully."
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update user password {{ tag: 'PUT', label: '/user/account/:userId/password' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to change the password for the user's account. Provide the current password and the new password in the request to update the password.
+
+    ### Required attributes
+    <Properties>
+      <Property name="old_password" type="string">
+        The current password of the user's account.
+      </Property>
+      <Property name="new_password" type="string">
+        The new password to be set for the user's account.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PUT" label="/user/account/user_id/password">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.update('user_id', {
+    old_password: 'current_password',
+    new_password: 'new_password',
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Password updated successfully."
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Delete user account {{ tag: 'DELETE', label: '/user/account/:userId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to delete the user's account. Please note that this action is irreversible and will permanently remove the user's account along with all associated data.
+
+    ### Required attributes
+    <Properties>
+      <Property name="user_id" type="string">
+        The unique identifier of the user's account to be deleted.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="DELETE" label="/user/account/user_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.delete('user_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "User account deleted successfully."
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Get user privacy settings {{ tag: 'GET', label: '/user/:userId/privacy' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve the privacy settings for a specific user. The privacy settings control how certain information is shared with others in the user's network. You can retrieve settings such as who can see the user's last seen status, online status, profile photo, about information, status updates, read receipts, default message time, group invitation permissions, and more.
+
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/privacy">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.users.get('user_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "User privacy setting retrieved",
+    "privacySetting": {
+      "last_seen": {
+        "visibility": "nobody",
+        "except": []
+      },
+      "online": {
+        "visibility": "everyone",
+        "except": []
+      },
+      "profile_photo": {
+        "visibility": "my_contacts",
+        "except": []
+      },
+      "about": {
+        "visibility": "my_contacts_except",
+        "except": ["user_id_2", "user_id_3"]
+      },
+      "status": {
+        "visibility": "only_share_with",
+        "except": ["user_id_2", "user_id_3"]
+      },
+      "read_receipt": true,
+      "default_message_time": 0,
+      "can_be_added_to_groups": "everyone",
+      "silence_unknown_callers": false,
+      "blocked_contacts": ["user_id_4", "user_id_5"]
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update user privacy settings {{ tag: 'PATCH', label: '/user/:userId/privacy' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update the privacy settings for a specific user. The privacy settings control how certain information is shared with others in the user's network. You can update settings such as who can see the user's last seen status, online status, profile photo, about information, status updates, read receipts, default message time, group invitation permissions, and more.
+
+    ### Optional attributes
+    <Properties>
+      <Property name="last_seen" type="object">
+        Configure the visibility and exceptions for the last seen status.
+      </Property>
+      <Property name="online" type="object">
+        Configure the visibility and exceptions for the online status.
+      </Property>
+      <Property name="profile_photo" type="object">
+        Configure the visibility and exceptions for the profile photo.
+      </Property>
+      <Property name="about" type="object">
+        Configure the visibility and exceptions for the about information.
+      </Property>
+      <Property name="status" type="object">
+        Configure the visibility and exceptions for status updates.
+      </Property>
+      <Property name="read_receipt" type="boolean">
+        Set to `true` to enable read receipts, `false` otherwise.
+      </Property>
+      <Property name="default_message_time" type="number">
+        Set the default message time (e.g., 0 for now).
+      </Property>
+      <Property name="can_be_added_to_groups" type="string">
+        Specify who can add the user to groups (e.g., "everyone", "contacts", "nobody").
+      </Property>
+      <Property name="silence_unknown_callers" type="boolean">
+        Set to `true` to silence calls from unknown callers, `false` otherwise.
+      </Property>
+      <Property name="blocked_contacts" type="array of strings">
+        List of user IDs that are blocked by the user.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PATCH" label="/user/user_id/privacy">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  const privacySettingsUpdate = {
+    last_seen: "nobody",
+    online: "everyone",
+    profile_photo: "my_contacts",
+    about: {
+      visibility: "my_contacts_except",
+      except: ["user_id_1", "user_id_2"]
+    },
+    status: {
+      visibility: "only_share_with",
+      except: ["user_id_1", "user_id_2"]
+    },
+    read_receipt: true,
+    default_message_time: 0,
+    can_be_added_to_groups: "everyone",
+    silence_unknown_callers: false,
+    blocked_contacts: ["user_id_3", "user_id_4"]
+  }
+
+  await client.privacies.update('user_id', privacySettingsUpdate)
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "User privacy settings updated successfully.",
+    "privacySetting": {
+      "last_seen": "nobody",
+      "online": "everyone",
+      "profile_photo": "my_contacts",
+      "about": {
+        "visibility": "my_contacts_except",
+        "except": ["user_id_1", "user_id_2"]
+      },
+      "status": {
+        "visibility": "only_share_with",
+        "except": ["user_id_1", "user_id_2"]
+      },
+      "read_receipt": true,
+      "default_message_time": 0,
+      "can_be_added_to_groups": "everyone",
+      "silence_unknown_callers": false,
+      "blocked_contacts": ["user_id_3", "user_id_4"]
+    }
+  }
+  ```
+
+  </Col>
+</Row>

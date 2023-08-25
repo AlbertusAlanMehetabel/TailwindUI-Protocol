@@ -1,0 +1,355 @@
+export const description = 'Chats are essential containers for messages exchanged between users, their contacts, and groups.'
+
+# Chats
+
+Chats are essential containers for messages exchanged between users, their contacts, and groups.
+
+## The chat model
+
+A chat object contains the following properties:
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the contact.
+  </Property>
+  <Property name="type" type="string">
+    The type of the chat ("private" or "group").
+  </Property>
+  <Property name="participants" type="array">
+    An array of participant objects representing users in the chat.
+  </Property>
+  <Property name="last_message" type="object">
+    Information about the last message in the chat.
+  </Property>
+</Properties>
+
+---
+
+## Get all chats {{ tag: 'GET', label: '/user/:userId/chats' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve all chats associated with a specific user. Chats are containers for messages between the user, their contacts, and groups.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose chats you want to retrieve.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/chats">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.chats.getAllForUser('user_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Chats retrieved",
+    "chat_count": 3,
+    "chats": [
+      {
+        "id": "chat_id_1",
+        "type": "private",
+        "participants": [
+          {
+            "id": "user_id_1",
+            "full_name": "User 1",
+            "profil_picture": "https://example.com/user1.jpg"
+          },
+          {
+            "id": "user_id_2",
+            "full_name": "User 2",
+            "profil_picture": "https://example.com/user2.jpg"
+          }
+        ],
+        "last_message": {
+          "id": "message_id_1",
+          "sender": {
+            "id": "user_id_1",
+            "full_name": "User 1",
+            "profil_picture": "https://example.com/user1.jpg"
+          },
+          "content": "Hello there!",
+          "timestamp": "2023-08-17T12:01:00Z"
+        }
+      },
+      {
+        "id": "chat_id_2",
+        "type": "group",
+        "participants": [
+          {
+            "id": "user_id_1",
+            "full_name": "User 1",
+            "profil_picture": "https://example.com/user1.jpg"
+          },
+          {
+            "id": "user_id_2",
+            "full_name": "User 2",
+            "profil_picture": "https://example.com/user2.jpg"
+          },
+          // ...
+        ],
+        "last_message": {
+          "id": "message_id_2",
+          "sender": {
+            "id": "user_id_2",
+            "full_name": "User 2",
+            "profil_picture": "https://example.com/user2.jpg"
+          },
+          "content": "Hi there!",
+          "timestamp": "2023-08-17T12:02:00Z"
+        }
+      },
+      // ...
+    ]
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Get a chat {{ tag: 'GET', label: '/user/:userId/chats/:chatId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve a specific chat associated with a specific user using the chat's ID.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user who owns the chat.
+      </Property>
+      <Property name="chatId" type="string">
+        The ID of the chat you want to retrieve.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/chats/chat_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.chats.get('user_id', 'chat_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Chat retrieved",
+    "chat": {
+      "id": "chat_id",
+      "type": "private",
+      "participants": [
+        {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg"
+        },
+        {
+          "id": "user_id_2",
+          "full_name": "User 2",
+          "profil_picture": "https://example.com/user2.jpg"
+        }
+      ],
+      "last_message": {
+        "id": "message_id_1",
+        "sender": {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg"
+        },
+        "content": "Hello there!",
+        "timestamp": "2023-08-17T12:01:00Z"
+      }
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Create a chat {{ tag: 'POST', label: '/user/:userId/chats' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create a new chat with one or more participants.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user who is creating the chat.
+      </Property>
+      <Property name="participants" type="array">
+        An array of user IDs representing the participants of the chat.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="chatName" type="string">
+        A custom name for the chat (only applicable for group chats).
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="POST" label="/user/user_id/chats">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.chats.create('user_id', {
+    participants: ['user_id_1', 'user_id_2'],
+    chatName: 'Group Chat Name'
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Chat created successfully.",
+    "chat": {
+      "id": "new_chat_id",
+      "type": "group",
+      "participants": [
+        {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg"
+        },
+        {
+          "id": "user_id_2",
+          "full_name": "User 2",
+          "profil_picture": "https://example.com/user2.jpg"
+        }
+      ],
+      "last_message": null
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update a chat {{ tag: 'PATCH', label: '/user/:userId/chats/:chatId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update the details of a specific chat, such as changing the chat name for a group chat.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user who is updating the chat.
+      </Property>
+      <Property name="chatId" type="string">
+        The ID of the chat to be updated.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="chatName" type="string">
+        The new chat name for the group chat.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PATCH" label="/user/user_id/chats/chat_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.chats.update('user_id', 'chat_id', {
+    chatName: 'New Group Chat Name'
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Chat updated successfully.",
+    "chat": {
+      "id": "chat_id",
+      "type": "group",
+      "participants": [
+        {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg"
+        },
+        {
+          "id": "user_id_2",
+          "full_name": "User 2",
+          "profil_picture": "https://example.com/user2.jpg"
+        }
+      ],
+      "chatName": "New Group Chat Name",
+      "last_message": null
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Delete a chat {{ tag: 'DELETE', label: '/user/:userId/chats/:chatId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to delete a specific chat, which can be either a one-on-one chat or a group chat.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user who is deleting the chat.
+      </Property>
+      <Property name="chatId" type="string">
+        The ID of the chat to be deleted.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="DELETE" label="/user/user_id/chats/chat_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.chats.delete('user_id', 'chat_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Chat deleted successfully.",
+  }
+  ```
+
+  </Col>
+</Row>

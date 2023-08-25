@@ -1,0 +1,277 @@
+export const description =
+  'A community is a collection of two or more groups where one can make an announcement.'
+
+# Communities
+
+A community is a collection of two or more groups where one can make an announcement.
+
+## The community model
+
+A comunity object contains the following properties:
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the group.
+  </Property>
+</Properties>
+
+---
+
+## Get all communities {{ tag: 'GET', label: '/communities' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve a list of all communities. Communities are collections of two or more groups where users can make announcements.
+
+    ### Optional attributes
+    <Properties>
+      <Property name="limit" type="integer">
+        Limit the number of communities returned in a single page.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/communities">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.communities.list({ limit: 10 })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "All communities retrieved",
+    "community_count": 3,
+    "communities": [
+      {
+        "id": "community_id_1",
+        "name": "Community 1",
+        "description": "This is community 1",
+        "groups": ["group_id_1", "group_id_2"],
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      {
+        "id": "community_id_2",
+        "name": "Community 2",
+        "description": "This is community 2",
+        "groups": ["group_id_3", "group_id_4"],
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      // ...
+    ]
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Get a community {{ tag: 'GET', label: '/communities/:communityId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve information about a specific community.
+
+    ### Required attributes
+    <Properties>
+      <Property name="communityId" type="string">
+        The ID of the community you want to retrieve.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/communities/community_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.communities.get('community_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Community retrieved successfully",
+    "community": {
+      "id": "community_id",
+      "name": "Community Name",
+      "description": "This is a community description",
+      "groups": ["group_id_1", "group_id_2"],
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Create a community {{ tag: 'POST', label: '/communities' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to create a new community.
+
+    ### Required attributes
+    <Properties>
+      <Property name="name" type="string">
+        The name of the community.
+      </Property>
+      <Property name="description" type="string">
+        A description of the community.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="groups" type="array">
+        An array of group IDs that will be part of the community.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="POST" label="/communities">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  const newCommunity = {
+    name: "New Community",
+    description: "This is a new community description",
+    groups: ["group_id_1", "group_id_2"]
+  }
+
+  await client.communities.create(newCommunity)
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Community created successfully",
+    "community": {
+      "id": "new_community_id",
+      "name": "New Community",
+      "description": "This is a new community description",
+      "groups": ["group_id_1", "group_id_2"],
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update a community {{ tag: 'PUT', label: '/communities/:communityId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update an existing community.
+
+    ### Required attributes
+    <Properties>
+      <Property name="communityId" type="string">
+        The ID of the community to be updated.
+      </Property>
+      <Property name="name" type="string">
+        The new name for the community.
+      </Property>
+      <Property name="description" type="string">
+        The new description for the community.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="groups" type="array">
+        An updated array of group IDs that will be part of the community.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PUT" label="/communities/community_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  const updatedCommunity = {
+    name: "Updated Community Name",
+    description: "Updated community description",
+    groups: ["new_group_id_1", "new_group_id_2"]
+  }
+
+  await client.communities.update('community_id', updatedCommunity)
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Community updated successfully",
+    "community": {
+      "id": "community_id",
+      "name": "Updated Community Name",
+      "description": "Updated community description",
+      "groups": ["new_group_id_1", "new_group_id_2"],
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Delete a community {{ tag: 'DELETE', label: '/communities/:communityId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to delete an existing community.
+
+    ### Required attributes
+    <Properties>
+      <Property name="communityId" type="string">
+        The ID of the community to be deleted.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="DELETE" label="/communities/community_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.communities.delete('community_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Community deleted successfully",
+  }
+  ```
+
+  </Col>
+</Row>

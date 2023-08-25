@@ -1,0 +1,396 @@
+export const description =
+  'On this page, we’ll dive into the different message endpoints you can use to manage messages programmatically.'
+
+# Messages
+
+Messages are what conversations are made of in Protocol — they are the basic building blocks of your conversations with your Protocol contacts. On this page, we'll dive into the different message endpoints you can use to manage messages programmatically. We'll look at how to query, send, update, and delete messages. {{ className: 'lead' }}
+
+## The message model
+
+The message model contains all the information about the messages and attachments you send to your contacts and groups, including how your contacts have reacted to them.
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the message.
+  </Property>
+  <Property name="conversation_id" type="string">
+    Unique identifier for the conversation the message belongs to.
+  </Property>
+  <Property name="contact" type="object">
+    The contact object for the contact who sent the message.
+  </Property>
+  <Property name="message" type="string">
+    The message content.
+  </Property>
+  <Property name="reactions" type="array">
+    An array of reaction objects associated with the message.
+  </Property>
+  <Property name="attachments" type="array">
+    An array of attachment objects associated with the message.
+  </Property>
+  <Property name="read_at" type="timestamp">
+    Timestamp of when the message was read.
+  </Property>
+  <Property name="created_at" type="timestamp">
+    Timestamp of when the message was created.
+  </Property>
+  <Property name="updated_at" type="timestamp">
+    Timestamp of when the message was last updated.
+  </Property>
+</Properties>
+
+---
+
+## Get all messages {{ tag: 'GET', label: '/user/:userId/messages' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve all messages associated with a specific user. Messages are the basic building blocks of conversations with contacts.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose messages you want to retrieve.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/messages">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.messages.getAllForUser('user_id')
+  ```
+
+  </CodeGroup>
+
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Message retrieved",
+    "data_count": 5,
+    "data": [
+      {
+        "id": "message_id_1",
+        "sender": {
+          "id": "user_id_1",
+          "full_name": "User 1",
+          "profil_picture": "https://example.com/user1.jpg",
+          "last_active_at": "timestamps",
+        },
+        "content": "Hello there!",
+        "timestamp": "2023-08-17T12:01:00Z",
+        "status": "sent",
+        "read_by": ["user_id_2"],
+        "reactions": [
+          {
+            "id": "reaction_id_1",
+            "user": {
+              "id": "user_id_2",
+              "full_name": "User 2",
+              "profil_picture": "https://example.com/user2.jpg"
+            },
+              "emoji": "😄",
+              "timestamp": "2023-08-17T12:05:00Z"
+          }
+        ]
+      },
+      {
+        "id": "message_id_2",
+        "sender": {
+          "id": "user_id_2",
+          "full_name": "User 2",
+          "profil_picture": "https://example.com/user2.jpg"
+        },
+        "content": "Hi!",
+        "timestamp": "2023-08-17T12:02:00Z",
+        "status": "delivered",
+        "read_by": ["user_id_1"],
+        "reactions": []
+      },
+      // ..
+    ]
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Get a message {{ tag: 'GET', label: '/user/:userId/messages/:messageId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve a specific message associated with a user.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose message you want to retrieve.
+      </Property>
+      <Property name="messageId" type="string">
+        The ID of the message you want to retrieve.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/messages/message_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.messages.get('user_id', 'message_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Message retrieved",
+    "data": {
+      "id": "message_id",
+      "sender": {
+        "id": "user_id_1",
+        "full_name": "User 1",
+        "profil_picture": "https://example.com/user1.jpg"
+      },
+      "receiver": {
+        "id": "user_id_2",
+        "full_name": "User 2",
+        "profil_picture": "https://example.com/user2.jpg"
+      },
+      "content": "Hello there!",
+      "timestamp": "2023-08-17T12:01:00Z",
+      "status": "sent",
+      "read_by": ["user_id_2"],
+      "reactions": [
+        {
+          "id": "reaction_id_1",
+          "user": {
+            "id": "user_id_2",
+            "full_name": "User 2",
+            "profil_picture": "https://example.com/user2.jpg"
+          },
+          "emoji": "😄",
+          "timestamp": "2023-08-17T12:05:00Z"
+        }
+      ]
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Send a message {{ tag: 'POST', label: '/user/:userId/messages' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to send a new message to a specific user.
+
+    ### Required attributes
+    <Properties>
+      <Property name="receiver_id" type="string">
+        The ID of the user who will receive the message.
+      </Property>
+      <Property name="content" type="string">
+        The content of the message.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="attachment_url" type="string">
+        The URL of an attachment associated with the message (e.g., image, video, file).
+      </Property>
+      <Property name="reactions" type="array">
+        An array of reactions to the message, each containing the user ID and emoji.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="POST" label="/user/user_id/messages">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.messages.send('user_id', {
+    receiver_id: 'contact_id_1',
+    content: 'Hello there!',
+    attachment_url: 'https://example.com/image.jpg',
+    reactions: [
+      { user_id: 'user_id_2', emoji: '😄' },
+      { user_id: 'user_id_3', emoji: '👍' }
+    ]
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Message sent successfully.",
+    "data": {
+      "id": "new_message_id",
+      "sender": {
+        "id": "user_id",
+        "full_name": "Your Name",
+        "profil_picture": "https://example.com/your_avatar.jpg"
+      },
+      "receiver": {
+        "id": "contact_id_1",
+        "full_name": "Contact Name",
+        "profil_picture": "https://example.com/contact_avatar.jpg"
+      },
+      "content": "Hello there!",
+      "timestamp": "timestamp",
+      "status": "sent",
+      "read_by": [],
+      "reactions": [
+        {
+          "id": "reaction_id_1",
+          "user": {
+            "id": "user_id_2",
+            "full_name": "User 2",
+            "profil_picture": "https://example.com/user2.jpg"
+          },
+          "emoji": "😄",
+          "timestamp": "timestamp"
+        },
+        // ...
+      ]
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Update a message {{ tag: 'PATCH', label: '/user/:userId/messages/:messageId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update a specific message associated with a user.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose message you want to update.
+      </Property>
+      <Property name="messageId" type="string">
+        The ID of the message you want to update.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="content" type="string">
+        The updated content of the message.
+      </Property>
+      <Property name="attachment_url" type="string">
+        The updated URL of the attachment associated with the message.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PATCH" label="/user/user_id/messages/message_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.messages.update('user_id', 'message_id', {
+    content: 'Updated content',
+    attachment_url: 'https://example.com/updated_image.jpg'
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Message updated successfully.",
+    "data": {
+      "id": "message_id",
+      "sender": {
+        "id": "user_id_1",
+        "full_name": "User 1",
+        "profil_picture": "https://example.com/user1.jpg"
+      },
+      "receiver": {
+        "id": "user_id_2",
+        "full_name": "User 2",
+        "profil_picture": "https://example.com/user2.jpg"
+      },
+      "content": "Updated content",
+      "timestamp": "2023-08-17T12:01:00Z",
+      "status": "sent",
+      "read_by": ["user_id_2"],
+      "reactions": [
+        {
+          "id": "reaction_id_1",
+          "user": {
+            "id": "user_id_2",
+            "full_name": "User 2",
+            "profil_picture": "https://example.com/user2.jpg"
+          },
+          "emoji": "😄",
+          "timestamp": "2023-08-17T12:05:00Z"
+        }
+      ]
+    }
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Delete a message {{ tag: 'DELETE', label: '/user/:userId/messages/:messageId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to delete a specific message associated with a user.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose message you want to delete.
+      </Property>
+      <Property name="messageId" type="string">
+        The ID of the message you want to delete.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="DELETE" label="/user/user_id/messages/message_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.messages.delete('user_id', 'message_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Message deleted successfully."
+  }
+  ```
+
+  </Col>
+</Row>

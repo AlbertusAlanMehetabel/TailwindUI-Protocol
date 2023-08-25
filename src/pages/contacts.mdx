@@ -1,0 +1,315 @@
+export const description =
+  'Contacts are an essential part of the Protocol system, allowing secure communication between users. This section covers various contact-related endpoints for managing contacts programmatically.'
+
+# Contacts
+
+Contacts are an essential part of the Protocol system, allowing secure communication between users. This section covers various contact-related endpoints for managing contacts programmatically.
+
+## The contact model
+
+The contact model holds comprehensive information about users. This includes their first name, last name, avatar, phone number, conversation reference, and last active timestamp.
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the contact.
+  </Property>
+  <Property name="first_name" type="string">
+    First name of the contact.
+  </Property>
+  <Property name="last_name" type="string">
+    Last name of the contact.
+  </Property>
+  <Property name="phone_number" type="string">
+    Phone number of the contact.
+  </Property>
+  <Property name="avatar_url" type="string">
+    URL of the contact's avatar image.
+  </Property>
+  <Property name="about" type="string">
+    Brief information about the contact.
+  </Property>
+  <Property name="created_at" type="string">
+    Timestamp of the contact's creation.
+  </Property>
+  <Property name="updated_at" type="string">
+    Timestamp of the contact's last update.
+  </Property>
+  <Property name="last_active_at" type="string">
+    Timestamp of the contact's last activity.
+  </Property>
+</Properties>
+
+---
+
+## Get all user contact {{ tag: 'GET', label: '/user/:userId/contactas' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve a paginated list of contacts for a specific user. By default, a maximum of ten contacts are shown per page.
+
+    ### Optional attributes
+    <Properties>
+      <Property name="limit" type="integer">
+        Limit the number of contacts returned in a single page.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/contacts">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.contacts.listForUser('user_id', { limit: 10 })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "User contact list retrieved successfully",
+    "friend_count": 3,
+    "friend": [
+      {
+        "id": "contact_id_1",
+        "full_name": "Contact 1",
+        "phone_number": "081234567891",
+        "avatar_url": "https://example.com/media/avatar1.jpg",
+        "about": "busy",
+        "last_active_at": "timestamp"
+      },
+      {
+        "id": "contact_id_2",
+        "full_name": "Contact 2",
+        "phone_number": "081234567892",
+        "avatar_url": "https://example.com/media/avatar2.jpg",
+        "about": "Hi There, Im using wassap",
+        "last_active_at": "timestamp"
+      },
+      // ...
+    ]
+  }
+  ```
+
+  </Col>
+</Row>
+
+---
+
+## Get a contact {{ tag: 'GET', label: '/user/:userId/contacts/:contactId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to retrieve detailed information about a specific contact for a user.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose contact list you want to access.
+      </Property>
+      <Property name="contactId" type="string">
+        The ID of the contact you want to retrieve information about.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="GET" label="/user/user_id/contacts/contact_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.contacts.getForUser('user_id', 'contact_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Contact information retrieved successfully",
+    "contact": {
+      "id": "contact_id",
+      "full_name": "Contact Name",
+      "phone_number": "081234567891",
+      "avatar_url": "https://example.com/media/avatar1.jpg",
+      "about": "Busy",
+      "is_muted": false,
+      "last_active_at": "timestamp"
+    }
+  }
+  ```
+  </Col>
+</Row>
+
+---
+
+## Add a contact {{ tag: 'POST', label: '/user/:userId/contacts' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to add a new contact to a specific user's contact list. To add a contact, you must provide their firt and last name and phone number.
+
+    ### Required attributes
+    <Properties>
+      <Property name="first_name" type="string">
+        The first name of the contact.
+      </Property>
+      <Property name="last_name" type="string">
+        The last name of the contact.
+      </Property>
+      <Property name="phone_number" type="string">
+        The phone number of the contact.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="profile_picture" type="string">
+        The profile picture URL for the contact.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="POST" label="/user/user_id/contacts">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.contacts.createForUser('user_id', {
+    first_name: 'New',
+    last_name: 'Contact',
+    phone_number: '081234567891',
+    avatar_url: 'https://example.com/media/foto2.jpg',
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Contact added successfully.",
+    "contact": {
+      "id": "new_contact_id",
+      "full_name": "New Contact",
+      "phone_number": "081234567890",
+      "avatar_url": "https://example.com/media/avatar.jpg",
+      "about": "Hello, I'm a new contact!",
+      "is_muted": false,
+      "updated_at": "timestamp",
+      "last_active_at": "timestamp"
+    }
+  }
+  ```
+  </Col>
+</Row>
+
+---
+
+## Update a contact {{ tag: 'PATCH', label: '/user/:userId/contacts/:contactId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to update the information of an existing contact for a user. You can modify attributes such as the contact's full name, phone number, and profile picture.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose contact list you want to update.
+      </Property>
+      <Property name="contactId" type="string">
+        The ID of the contact you want to update.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+    <Properties>
+      <Property name="first_name" type="string">
+        The updated first name of the contact.
+      </Property>
+      <Property name="last_name" type="string">
+        The updated last name of the contact.
+      </Property>
+      <Property name="phone_number" type="string">
+        The updated phone number of the contact.
+      </Property>
+      <Property name="profile_picture" type="string">
+        The updated profile picture URL for the contact.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="PATCH" label="/user/user_id/contacts/contact_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.contacts.updateForUser('user_id', 'contact_id', {
+    first_name: 'Updated',
+    last_name: 'Contact',
+    phone_number: '081234567892',
+    profile_picture: 'https://example.com/media/foto3.jpg',
+  })
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Contact updated successfully.",
+    "contact": {
+      "id": "contact_id",
+      "full_name": "Updated Contact",
+      "phone_number": "081234567892",
+      "avatar_url": "https://example.com/media/foto3.jpg",
+      "about": "Busy",
+      "is_muted": false,
+      "updated_at": "timestamp",
+      "last_active_at": "timestamp"
+    }
+  }
+  ```
+  </Col>
+</Row>
+
+---
+
+## Delete a contact {{ tag: 'DELETE', label: '/user/:userId/contacts/:contactId' }}
+
+<Row>
+  <Col>
+    This endpoint allows you to delete a contact from a user's contact list.
+
+    ### Required attributes
+    <Properties>
+      <Property name="userId" type="string">
+        The ID of the user whose contact list you want to update.
+      </Property>
+      <Property name="contactId" type="string">
+        The ID of the contact you want to delete.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+
+  <CodeGroup title="Request" tag="DELETE" label="/user/user_id/contacts/contact_id">
+  ```js
+  import ApiClient from '@example/protocol-api'
+
+  const client = new ApiClient(token)
+
+  await client.contacts.deleteForUser('user_id', 'contact_id')
+  ```
+
+  </CodeGroup>
+  ```json {{ title: 'Response' }}
+  {
+    "message": "Contact deleted successfully."
+  }
+  ```
+  </Col>
+</Row>
